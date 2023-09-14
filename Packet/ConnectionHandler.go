@@ -13,28 +13,28 @@ func HandleConnection(conn net.Conn) {
 	var id byte
 
 	for {
+		// TODO: make this buffer not static, only read the entire size of the packet
 		buf := make([]byte, 8192)
 		log.Println("Reading!")
 
 		count, err := conn.Read(buf)
 		if err != nil {
-			log.Printf("%s | user has disconnected with error %s", addr, err)
+			log.Printf("%s | user has disconnected with error %s", server.GetIndentifier(addr), err)
 			break
 		}
 
 		log.Println(string(buf[:count]))
 
 		if count == 0 {
-			log.Printf("%s | sent packet of length 0, dropping...", addr)
+			log.Printf("%s | sent packet of length 0, dropping...", server.GetIndentifier(addr))
 			break
 		}
 
 		s := Serializer{0, buf}
 
 		if buf[0] == 0xFE {
-			server.Disconnect(conn)
-			log.Printf("%s | dropping legacy ping...", addr)
-			return
+			log.Printf("%s | dropping legacy ping...", server.GetIndentifier(addr))
+			break
 		}
 
 		// if int32(count) < size {
