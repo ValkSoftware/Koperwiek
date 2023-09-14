@@ -4,40 +4,40 @@ import (
 	"net"
 )
 
-type ClientState int
-
-const (
-	StateHandshake ClientState = 0
-	StateStatus    ClientState = 1
-	StateLogin     ClientState = 2
-	StatePlay      ClientState = 3
-)
-
 var s Server = Server{
-	map[net.Addr]ClientState{},
+	map[net.Addr]Client{},
 }
 
 type Server struct {
-	clients map[net.Addr]ClientState
+	clients map[net.Addr]Client
 }
 
-func AddClient(address net.Addr, state ClientState) {
-	s.clients[address] = state
+func AddClient(address net.Addr, client Client) {
+	s.clients[address] = client
 }
 
-func UpdateClient(address net.Addr, state ClientState) {
-	s.clients[address] = state
-}
-
-func RemoveClient(address net.Addr) {
+func removeClient(address net.Addr) {
 	delete(s.clients, address)
 }
 
-func GetClientState(a net.Addr) ClientState {
+func GetClient(a net.Addr) Client {
 	return s.clients[a]
 }
 
+func UpdateClient(a net.Addr, c Client) {
+	s.clients[a] = c
+}
+
 func Disconnect(a net.Conn) {
-	RemoveClient(a.RemoteAddr())
+	removeClient(a.RemoteAddr())
 	a.Close()
+}
+
+func GetIndentifier(a net.Addr) string {
+	if s.clients[a].username == "" {
+		return a.String()
+	} else {
+		return s.clients[a].username
+	}
+
 }

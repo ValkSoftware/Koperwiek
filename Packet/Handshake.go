@@ -13,27 +13,25 @@ func HandleHandshake(size int32, id byte, s Serializer, conn net.Conn) {
 		log.Println("Handshake received")
 		version := s.ReadVarint()
 		if version != 763 {
-			conn.Close()
+
 		}
 		s.ReadString()
 		s.ReadShort()
 
 		state := s.ReadVarint()
 		if state == 1 {
-			server.UpdateClient(conn.RemoteAddr(), server.StateStatus)
+			server.GetClient(conn.RemoteAddr()).UpdateState(server.StateStatus)
 			log.Println("Upgraded to status")
 			return
 		}
 
 		if state == 2 {
-			server.UpdateClient(conn.RemoteAddr(), server.StateLogin)
+			server.GetClient(conn.RemoteAddr()).UpdateState(server.StateLogin)
 			log.Println("Upgraded to login")
 			return
 		}
-
 		return
 	default:
 		return
 	}
-
 }

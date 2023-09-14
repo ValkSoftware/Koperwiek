@@ -31,7 +31,7 @@ func main() {
 		if err != nil {
 			log.Fatal("connection failed:", conn.RemoteAddr())
 		}
-		server.AddClient(conn.RemoteAddr(), server.StateHandshake)
+		server.AddClient(conn.RemoteAddr(), server.NewClient(server.StateHandshake))
 
 		go packet.HandleConnection(conn)
 	}

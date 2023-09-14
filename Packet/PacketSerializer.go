@@ -157,6 +157,21 @@ func (s *Serializer) ReadByteArray(len int32) []byte {
 	return b
 }
 
+func (s *Serializer) ReadUUID() [16]byte {
+	var res [16]byte = [16]byte{}
+	copy(res[:], s.ReadByteArray(16))
+	return res
+}
+
+func (s *Serializer) ReadBool() bool {
+	s.Index++
+	if s.Data[s.Index-1] == 0 {
+		return false
+	} else {
+		return true
+	}
+}
+
 func (s *Serializer) ReadVarint() int32 {
 	pos := 0
 	var val int32 = 0
